@@ -1,4 +1,4 @@
-
+import pandas
 
 # functions go here
 def yes_no(question):
@@ -74,6 +74,38 @@ def string_checker(question, valid_responses):
 
         print(error)
 
+
+#Check what pizza is selected and assign the name
+def pizza_id_checker(id):
+    if id == 1:
+        pizza = "Cheese"
+    elif id == 2:
+        pizza = "Hawaiian"
+    elif id == 3:
+        pizza = "Margherita"
+    elif id == 4:
+        pizza = "Pepperoni"
+    elif id == 5:
+        pizza = "Meatlovers"
+    elif id == 6:
+        pizza = "Chicken Supreme"
+    elif id == 7:
+        pizza = "Crispy BBQ Pork Belly"
+    elif id == 8:
+        pizza = "Lamb Kebab"
+    elif id == 9:
+        pizza = "Peri Peri Chicken"
+    else:
+        pizza = "Chicken & Camembert"
+
+    return pizza
+
+
+# currency formatting function
+def currency(x):
+    return "${:.2f}".format(x)
+
+
 # shows menu
 def show_menu():
     print('''\n
@@ -114,29 +146,39 @@ print("Welcome to Pita's Pizzaria")
 
 # set maximum number of pizzas
 MAX_PIZZAS = 5
+want_order = ""
 
 yes_no_list = ["yes", "no"]
 delivery_option = ["delivery", "pickup"]
+size_option = ["regular", "large"]
 
 # List to hold pizza details
-all_name = ["1.Cheese", "2.Hawaiian", "3.Margherita", "4.Pepperoni", "5.Meatlovers",
-            "6.Chicken Supreme", "7.Crispy BBQ Pork Belly", "8.Lamb Kebab", "9.Peri Peri Chicken",
-            "10.Chicken and Camembert"]
-regular_pizza_cost =["1.$7.00", "2.$7.00", "3.$7.00", "4.$7.00", "5.$10.00",
-                    "6.$10.00", "7.$10.00", "8.$10.00", "9.$15.00", "10.$15.00"]
-large_pizza_cost = ["1.$10.00", "2.$10.00", "3.$10.00", "4.$10.00", "5.$13.00",
-                    "6.$13.00", "7.$13.00", "8.$13.00", "9.$18.00", "10.$18.00"]
-all_surcharge = []
+all_name = ["Cheese", "Hawaiian", "Margherita", "Pepperoni", "Meatlovers",
+            "Chicken Supreme", "Crispy BBQ Pork Belly", "Lamb Kebab", "Peri Peri Chicken",
+            "Chicken and Camembert"]
+regular_pizza_cost =["$7.00", "$7.00", "$7.00", "$7.00", "$7.00",
+                    "$7.00", "$7.00", "$7.00", "$7.00", "$7.00"]
+large_pizza_cost = ["$10.00", "$10.00", "$10.00", "$10.00", "$10.00",
+                    "$10.00", "$10.00", "$10.00", "$10.00", "$10.00"]
+user_order = []
 all_size_pizza = []
+all_pizza_cost = []
 
 # Dictionary used  to create data frame ie: column_name:
 pizza_order_dict = {
+    "pizzas": user_order,
+    "size": all_size_pizza,
+    "price": all_pizza_cost
+}
+pizza_menu_dict = {
     "Name": all_name,
     "Regular Pizza Cost": regular_pizza_cost,
-    "Large Pizza Cost": large_pizza_cost,
-    "Surcharge": all_surcharge,
-    "Size of Pizza": all_size_pizza
+    "Large Pizza Cost": large_pizza_cost
 }
+
+
+menu_frame = pandas.DataFrame(pizza_menu_dict)
+
 
 # Select name for order
 name = not_blank("Please enter your name for order ")
@@ -149,30 +191,48 @@ if delivery == "delivery":
     print("There is a $6 surcharge")
 
 # Would you like to place an order
-while True:
-    want_order = yes_no("Would you like to place"
-                        " an order?")
+while want_order == "":
 
-    if want_order == "yes":
-        print(show_menu())
 
-        print()
+    print(menu_frame)
+
+    print()
+
+    user_order_id = num_check("Please enter the number of the pizza you want to order(1-10)")
+
+    size_pizza = string_checker("What size would you like?(regular/large)", size_option)
+
+    if size_pizza == "regular":
+        cost = 7
 
     else:
-        break
+        cost = 10
 
-print("Thank you")
+    user_order_name = pizza_id_checker(user_order_id)
+
+    user_order.append(user_order_name)
+    all_size_pizza.append(size_pizza)
+    all_pizza_cost.append(cost)
+
+    print(f"You have selected {user_order_id}. {user_order_name} {size_pizza} ${cost}")
+
+
+
+    want_order = input("To order another pizza press enter or no to carry on ")
+
+
 
 # add item, quantity and price to lists-
-item_list.append(item_name)
-quantity_list.append(quantity)
-price_list.append(price)
+#all_name.append(all_name)
+#regular_pizza_cost.append(regular_pizza_cost)
+#large_pizza_cost.append(large_pizza_cost)
 
-expense_frame = pandas.DataFrame(variable_dict)
-expense_frame = expense_frame.set_index('Item')
+
+expense_frame = pandas.DataFrame(pizza_order_dict)
+expense_frame = expense_frame.set_index('pizzas')
 
 # Calculate cost of each component
-expense_frame['Cost'] = expense_frame['Quantity'] * expense_frame
+expense_frame['Cost'] = expense_frame['size'] * expense_frame
 
 # Find sub-total
 sub_total = expense_frame['Cost'].sum()
@@ -182,9 +242,12 @@ add_dollars = ['Price', 'Cost']
 for item in add_dollars:
     expense_frame[item] = expense_frame[item].apply(currency)
 
-return [expense_frame, sub_total]
+print(expense_frame)
 
-# loop to sell pizzas
+print("Thank you")
+
+
+
 
 
 
