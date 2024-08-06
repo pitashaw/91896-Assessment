@@ -1,8 +1,8 @@
 import pandas
 
+
 # functions go here
 def yes_no(question):
-
     while True:
         response = input(question).lower()
 
@@ -14,10 +14,10 @@ def yes_no(question):
 
         else:
             print("Please enter yes or no")
-            
+
+
 # checks that user response is not blank
 def not_blank(question):
-
     while True:
         response = input(question)
 
@@ -26,9 +26,9 @@ def not_blank(question):
         else:
             return response
 
+
 # checks users enter an integer to a given question
 def num_check(question):
-
     while True:
 
         try:
@@ -38,9 +38,9 @@ def num_check(question):
         except ValueError:
             print("Please enter an integer.")
 
+
 # Calculate the pizza price based on the size
 def calc_pizza_price(var_type):
-
     # pizza is $5.00 for 1,2,3,4
     if var_type < 5:
         price = 5.00
@@ -55,10 +55,10 @@ def calc_pizza_price(var_type):
 
     return price
 
+
 # checks that users enter a valid response (e.g. yes/ no
 # cash / credit) based on a list of options
 def string_checker(question, valid_responses):
-
     while True:
 
         error = f"Please enter a valid response from {valid_responses}"
@@ -68,14 +68,17 @@ def string_checker(question, valid_responses):
         for item in valid_responses:
             if item == response:
                 return item
-            elif response== item[0]:
+
+            elif response == item[0]:
                 return item
 
+                print(error)
 
-        print(error)
+# currency formatting function
+def currency(x):
+    return "${:.2f}".format(x)
 
-
-#Check what pizza is selected and assign the name
+# Check what pizza is selected and assign the name
 def pizza_id_checker(id):
     if id == 1:
         pizza = "Cheese"
@@ -99,47 +102,6 @@ def pizza_id_checker(id):
         pizza = "Chicken & Camembert"
 
     return pizza
-
-
-# currency formatting function
-def currency(x):
-    return "${:.2f}".format(x)
-
-
-# shows menu
-def show_menu():
-    print('''\n
-***** Menu *****
-Pizza                   Regular Large
-1.Cheese                $7.00  $10.00
-2.Hawaiian              $7.00  $10.00
-3.Margherita            $7.00  $10.00
-4.Pepperoni             $7.00  $10.00
-5.Meatlovers            $10.00 $13.00
-6.Chicken Supreme       $10.00 $13.00
-7.Crispy BBQ Pork Belly $10.00 $13.00
-8.Lamb Kebab            $10.00 $13.00
-9.Peri Peri Chicken     $15.00 $18.00
-10.Chicken & Camembert  $15.00 $18.00
-
-Regular: 12 Inches
-Large: 14 Inches
-
-Extra Toppings
-1.Feta Cheese     $1.50
-2.Pepperoni       $1.00
-3.Mushrooms       $0.75
-4.Green Peppers   $0.50
-5.Black Olives    $0.75
-6.Italian Sausage $1.25
-7.Red Onions      $0.75
-8.Spinach         $1.00
-9.Bacon           $1.50
-10.Tomatoes       $0.75
-
-Order a MAXIMUM of 5 pizzas
-
-******************************''')
 # Main Routine goes here
 
 print("Welcome to Pita's Pizzaria")
@@ -164,11 +126,17 @@ user_order = []
 all_size_pizza = []
 all_pizza_cost = []
 
+
+# Check what pizza is selected and assign the name
+all_order_totals = []
+total_cost = 0
+
 # Dictionary used  to create data frame ie: column_name:
 pizza_order_dict = {
-    "pizzas": user_order,
-    "size": all_size_pizza,
-    "price": all_pizza_cost
+    "pizzas:": user_order,
+    "size:": all_size_pizza,
+    "price:": all_pizza_cost,
+    "Total:": all_order_totals
 }
 pizza_menu_dict = {
     "Name": all_name,
@@ -176,9 +144,7 @@ pizza_menu_dict = {
     "Large Pizza Cost": large_pizza_cost
 }
 
-
 menu_frame = pandas.DataFrame(pizza_menu_dict)
-
 
 # Select name for order
 name = not_blank("Please enter your name for order ")
@@ -189,10 +155,10 @@ delivery = string_checker("Do you want pickup or delivery?", delivery_option)
 
 if delivery == "delivery":
     print("There is a $6 surcharge")
+    total_cost += 6.0
 
 # Would you like to place an order
 while want_order == "":
-
 
     print(menu_frame)
 
@@ -210,50 +176,51 @@ while want_order == "":
 
     user_order_name = pizza_id_checker(user_order_id)
 
-    user_order.append(user_order_name)
-    all_size_pizza.append(size_pizza)
-    all_pizza_cost.append(cost)
+    # Update the pizza_order_dict with order information
 
-    print(f"You have selected {user_order_id}. {user_order_name} {size_pizza} ${cost}")
+    # user_order.append(user_order_name)
+    # all_size_pizza.append(size_pizza)
+    # all_pizza_cost.append(cost)
 
+    # Add the pizza cost to the total
+    total_cost += cost
 
+    # Update the order_dict with order information
+    pizza_order_dict["pizzas:"].append(user_order_name)  # Add pizza name
+    pizza_order_dict["size:"].append(size_pizza)  # Add size
+    pizza_order_dict["price:"].append(cost)  # Add pizza price
+    pizza_order_dict["Total:"].append(cost)  # Add total cost
+
+    print(f"You have selected {user_order_name} {size_pizza} ${cost}")
 
     want_order = input("To order another pizza press enter or no to carry on ")
 
-
-
 # add item, quantity and price to lists-
-#all_name.append(all_name)
-#regular_pizza_cost.append(regular_pizza_cost)
-#large_pizza_cost.append(large_pizza_cost)
+# all_name.append(all_name)
+# regular_pizza_cost.append(regular_pizza_cost)
+# large_pizza_cost.append(large_pizza_cost)
 
 
-expense_frame = pandas.DataFrame(pizza_order_dict)
-expense_frame = expense_frame.set_index('pizzas')
+# Create the Order frame
+order_frame = pandas.DataFrame(pizza_order_dict)
+order_frame["price:"] = order_frame["price:"].apply(currency)
+order_frame["Total:"] = order_frame["Total:"].apply(currency)
+
+# expense_frame = pandas.DataFrame(pizza_order_dict)
+# expense_frame = expense_frame.set_index('pizzas')
 
 # Calculate cost of each component
-expense_frame['Cost'] = expense_frame['size'] * expense_frame
+# expense_frame['Cost'] = expense_frame['size'] * expense_frame
 
 # Find sub-total
-sub_total = expense_frame['Cost'].sum()
+# sub_total = expense_frame['Cost'].sum()
 
 # Currency Formatting (uses currency function)
-add_dollars = ['Price', 'Cost']
-for item in add_dollars:
-    expense_frame[item] = expense_frame[item].apply(currency)
+# add_dollars = ['Price', 'Cost']
+# for item in add_dollars:
+#   expense_frame[item] = expense_frame[item].apply(currency)
 
-print(expense_frame)
+print(order_frame.to_string(index=False, justify="left", col_space=15))
+print("The total price would be ${:.2f}".format(total_cost))
 
 print("Thank you")
-
-
-
-
-
-
-
-
-
-
-
-
