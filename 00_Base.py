@@ -125,6 +125,11 @@ large_pizza_cost = ["$10.00", "$10.00", "$10.00", "$10.00", "$10.00",
 user_order = []
 all_size_pizza = []
 all_pizza_cost = []
+all_topping = ["Feta Cheese", "Pepperoni", "Mushrooms", "Green Peppers",
+               "Black Olives", "Italian Sausage", "Red Onions", "Spinach",
+               "Bacon", "Tomatoes"]
+all_topping_price = ["$1.50", "$1.00", "$0.75", "$0.50", "$0.75", "$1.25"
+                     "$0.75", "$1.00", "$1.50", "$0.75"]
 
 
 # Check what pizza is selected and assign the name
@@ -144,7 +149,13 @@ pizza_menu_dict = {
     "Large Pizza Cost": large_pizza_cost
 }
 
+toppings_menu_dict = {
+    "Toppings": all_topping,
+    "Price": all_topping_price
+}
+
 menu_frame = pandas.DataFrame(pizza_menu_dict)
+toppings_menu_frame = pandas.DataFrame(toppings_menu_dict)
 
 # Select name for order
 name = not_blank("Please enter your name for order ")
@@ -174,7 +185,11 @@ while want_order == "":
     else:
         cost = 10
 
-    user_order_name = pizza_id_checker(user_order_id)
+    want_toppings = yes_no("Would you like to add extra toppings?", yes_no_list)
+    if want_toppings == "yes":
+            print(toppings_menu_frame)
+    else:
+        user_order_name = pizza_id_checker(user_order_id)
 
     # Update the pizza_order_dict with order information
 
