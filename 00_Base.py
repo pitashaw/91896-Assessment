@@ -2,19 +2,6 @@ import pandas
 
 
 # functions go here
-def yes_no(question):
-    while True:
-        response = input(question).lower()
-
-        if response == "yes" or response == "y":
-            return "yes"
-
-        elif response == "no" or response == "n":
-            return "no"
-
-        else:
-            print("Please enter yes or no")
-
 
 # checks that user response is not blank
 def not_blank(question):
@@ -72,7 +59,7 @@ def string_checker(question, valid_responses):
             elif response == item[0]:
                 return item
 
-                print(error)
+            print(error)
 
 # currency formatting function
 def currency(x):
@@ -102,6 +89,35 @@ def pizza_id_checker(id):
         pizza = "Chicken & Camembert"
 
     return pizza
+
+# Check what topping is selected and assign name
+def topping_id_checker(id):
+    if id == 1:
+        topping = "Feta Cheese"
+        price = 1.00
+    elif id == 2:
+        topping = "Pepperoni"
+    elif id == 3:
+        topping = "Mushrooms"
+        price = 0.75
+    elif id == 4:
+        topping = "Green Peppers"
+        price = .50
+    elif id == 5:
+        topping = "Black Olives"
+    elif id == 6:
+        topping = "Italian Sausage"
+    elif id == 7:
+        topping = "Red Onions"
+    elif id == 8:
+        topping = "Spinach"
+    elif id == 9:
+        topping = "Bacon"
+    else:
+        topping = "Tomatoes"
+        price = 0.75
+
+    return topping, price
 # Main Routine goes here
 
 print("Welcome to Pita's Pizzaria")
@@ -128,7 +144,7 @@ all_pizza_cost = []
 all_topping = ["Feta Cheese", "Pepperoni", "Mushrooms", "Green Peppers",
                "Black Olives", "Italian Sausage", "Red Onions", "Spinach",
                "Bacon", "Tomatoes"]
-all_topping_price = ["$1.50", "$1.00", "$0.75", "$0.50", "$0.75", "$1.25"
+all_topping_price = ["$1.50", "$1.00", "$0.75", "$0.50", "$0.75", "$1.25",
                      "$0.75", "$1.00", "$1.50", "$0.75"]
 
 
@@ -140,6 +156,8 @@ total_cost = 0
 pizza_order_dict = {
     "pizzas:": user_order,
     "size:": all_size_pizza,
+    "topping": all_topping,
+    "topping price": all_topping_price,
     "price:": all_pizza_cost,
     "Total:": all_order_totals
 }
@@ -176,7 +194,8 @@ while want_order == "":
     print()
 
     user_order_id = num_check("Please enter the number of the pizza you want to order(1-10)")
-
+    # assign pizza name using the pizza id checker function
+    user_order_name = pizza_id_checker(user_order_id)
     size_pizza = string_checker("What size would you like?(regular/large)", size_option)
 
     if size_pizza == "regular":
@@ -185,11 +204,11 @@ while want_order == "":
     else:
         cost = 10
 
-    want_toppings = yes_no("Would you like to add extra toppings?", yes_no_list)
+    want_toppings = string_checker("Would you like to add extra toppings?", yes_no_list)
     if want_toppings == "yes":
-            print(toppings_menu_frame)
-    else:
-        user_order_name = pizza_id_checker(user_order_id)
+        print(toppings_menu_frame)
+        topping_order_id = num_check("Please enter the number of the topping you want to order(1-10)")
+        topping_order_name, topping_cost = topping_id_checker(topping_order_id)
 
     # Update the pizza_order_dict with order information
 
@@ -203,10 +222,12 @@ while want_order == "":
     # Update the order_dict with order information
     pizza_order_dict["pizzas:"].append(user_order_name)  # Add pizza name
     pizza_order_dict["size:"].append(size_pizza)  # Add size
-    pizza_order_dict["price:"].append(cost)  # Add pizza price
+    pizza_order_dict["price:"].append(cost)  # Add topping price
+    pizza_order_dict["topping"].append(topping_order_name) # Add Topping
+    pizza_order_dict["topping price"].append(topping_cost)  # Add topping price
     pizza_order_dict["Total:"].append(cost)  # Add total cost
 
-    print(f"You have selected {user_order_name} {size_pizza} ${cost}")
+    print(f"You have selected {topping_order_name} ${topping_cost}")
 
     want_order = input("To order another pizza press enter or no to carry on ")
 
