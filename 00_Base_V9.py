@@ -1,3 +1,4 @@
+
 import pandas as pd
 
 # Functions go here
@@ -192,6 +193,12 @@ for index, row in order_frame.iterrows():
 
 # Select payment method
 payment_method = string_checker("How would you like to pay (cash/credit)? ", payment_option)
+
+if payment_method == "credit":
+    print("There is a 2% surcharge for credit payments.")
+    surcharge = total_cost * 0.02
+    total_cost += surcharge
+    print(f"Surcharge: {currency(surcharge)}")
 
 print(f"The total price would be {currency(total_cost)}")
 if delivery == "delivery":
