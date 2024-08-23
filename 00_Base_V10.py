@@ -1,9 +1,21 @@
+
 import pandas as pd
 
 # Functions go here
 
-# Stops users from entering a blank input
+# Stops users entering a blank input
 def not_blank(question):
+
+    while True:
+        response = input(question)
+
+        if response == "":
+            print("Sorry this can't be blank. Please try again")
+        else:
+            return response
+
+# Stops users from entering a non valid name
+def name_check(question):
     while True:
         response = input(question).strip()
         if response == "" or not response.isalpha():
@@ -59,7 +71,7 @@ def topping_id_checker(id):
     }
     return topping_dict.get(id, ("Unknown Topping", 0))
 
-# 
+#
 def phone_number_check(question):
     while True:
         response = input(question).strip()
@@ -100,7 +112,7 @@ menu_frame.index += 1
 toppings_menu_frame = pd.DataFrame(toppings_menu_dict)
 toppings_menu_frame.index += 1
 
-name = not_blank("Please enter your name for the order: ")
+name = name_check("Please enter your name for the order: ")
 
 delivery = string_checker("Do you want pickup or delivery? ",1, delivery_option)
 
@@ -108,7 +120,7 @@ if delivery == "delivery":
     print("There is a $6 surcharge.")
     total_cost = 6.0
     phone_number = phone_number_check("Please enter your phone number: ")
-    address = input("Please enter your delivery address: ")
+    address = not_blank("Please enter your delivery address: ")
 else:
     total_cost = 0
 
